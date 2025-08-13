@@ -1,0 +1,22 @@
+name "d-mac-calc-fx-gtk4"
+description "Simple Calculator with live FX (no API key) — D + GTK 4 適配版 — macOS Intel x64"
+authors "Ed Oo"
+license "MIT"
+targetType "executable"
+sourcePaths "source"
+excludedSourceFiles "source/app.d" "source/backup/*"
+mainSourceFile "source/app_gtk4.d"
+
+// 使用 GTK 3 綁定但適配 GTK 4 API
+dependency "gtk-d:gtkd" version=">=3.10.0 <4.0.0"
+
+compiler "ldc2"
+
+configuration "release" {
+    buildType "release"
+}
+
+configuration "static" {
+    buildType "release"
+    lflags "-L/usr/local/lib" "-L/usr/local/Cellar/gtk+3/3.24.49/lib" "-L/usr/local/Cellar/at-spi2-core/2.56.4/lib" "-lgtk-3" "-lgdk-3" "-latk-1.0" "-lgobject-2.0" "-lglib-2.0" "-lgmodule-2.0" "-lgio-2.0" "-lpango-1.0" "-lpangocairo-1.0" "-lgdk_pixbuf-2.0" "-lcairo" "-lcairo-gobject"
+}

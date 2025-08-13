@@ -1,0 +1,68 @@
+# C + GTK4 計算機應用程序 - 靜態連結版本
+
+# 編譯器和標誌（macOS 適配）
+CC = gcc
+CFLAGS = -Wall -Wextra -O3 -std=c11
+LDFLAGS = -lcurl -ljson-c -lpthread
+
+# GTK4 相關標誌 - 靜態連結
+GTK_CFLAGS = $(shell pkg-config --cflags gtk4)
+GTK_LIBS_STATIC = $(shell pkg-config --libs --static gtk4)
+
+# 額外的靜態庫
+STATIC_LIBS = -lz -lbz2 -llzma -liconv -lresolv -framework CoreFoundation -framework Security
+
+# 目標文件
+TARGET = c-mac-calc-fx-static
+SOURCE = main.c
+
+# 預設目標
+all: $(TARGET)
+
+# 靜態連結編譯規則
+$(TARGET): $(SOURCE)
+	@echo "正在編譯 C + GTK4 計算機應用程序（靜態連結）..."
+	@echo "GTK4 版本：$(shell pkg-config --modversion gtk4)"
+	$(CC) $(CFLAGS) $(GTK_CFLAGS) -o $(TARGET) $(SOURCE) $(GTK_LIBS_STATIC) $(LDFLAGS) $(STATIC_LIBS)
+	@echo "✅ 靜態連結編譯成功！"
+	@echo "可執行文件：./$(TARGET)"
+	@echo "文件大小：$(shell du -h $(TARGET) | cut -f1)"
+	@echo ""
+	@echo "檢查動態庫依賴："
+	@otool -L $(TARGET) | head -10
+
+# 清理
+clean:
+	rm -f $(TARGET)
+	@echo "清理完成"
+
+# 運行
+run: $(TARGET)
+	./$(TARGET)
+
+# 檢查依賴
+check-deps:
+	@echo "檢查靜態連結依賴..."
+	@pkg-config --exists gtk4 && echo "✅ GTK4: $(shell pkg-config --modversion gtk4)" || echo "❌ GTK4 未安裝"
+	@pkg-config --exists libcurl && echo "✅ libcurl: $(shell pkg-config --modversion libcurl)" || echo "❌ libcurl 未安裝"
+	@pkg-config --exists json-c && echo "✅ json-c: $(shell pkg-config --modversion json-c)" || echo "❌ json-c 未安裝"
+
+# 測試靜態連結
+test-static: $(TARGET)
+	@echo "測試靜態連結..."
+	@echo "動態庫依賴數量："
+	@otool -L $(TARGET) | wc -l
+	@echo "詳細依賴："
+	@otool -L $(TARGET)
+
+# 幫助
+help:
+	@echo "可用的 make 目標："
+	@echo "  all          - 編譯靜態連結程序（預設）"
+	@echo "  clean        - 清理編譯文件"
+	@echo "  run          - 編譯並運行程序"
+	@echo "  check-deps   - 檢查依賴"
+	@echo "  test-static  - 測試靜態連結效果"
+	@echo "  help         - 顯示此幫助"
+
+.PHONY: all clean run check-deps test-static help

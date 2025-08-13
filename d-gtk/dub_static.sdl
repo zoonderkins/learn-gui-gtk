@@ -1,0 +1,18 @@
+name "d-mac-calc-fx"
+description "Simple Calculator with live FX (no API key) — D + GtkD — macOS Intel x64"
+authors "Ed Oo"
+license "MIT"
+targetType "executable"
+
+dependency "gtk-d:gtkd" version=">=3.10.0 <4.0.0"
+
+compiler "ldc2"
+
+configuration "release" {
+    buildType "release"
+}
+
+configuration "static" {
+    buildType "release"
+    lflags "-L/usr/local/lib" "-lgtk-3" "-lgdk-3" "-latk-1.0"
+}
